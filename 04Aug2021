@@ -1,0 +1,20 @@
+-- Compares football player attackng raates to their preferred foot used in football matches
+SELECT defensive_work_rate,
+  COUNT ( CASE WHEN preferred)foot = 'left'
+    THEN player_id END) AS left,
+  COUNT ( CASE WHEN preferred)foot = 'right'
+    THEN player_id END) AS right
+FROM players
+GROUP BY defensive_work_rate;
+
+
+-- Calculate a running total of hot days (75F or higher)
+SELECT
+  date,
+  temp_f,
+  COUNT (CASE WHEN temp_f > 75 THEN 1 END)
+   AS CASE WHEN (ORDER BY date
+     UNBOUNDED PRECEDING
+    AND  ) hot_days
+FROM temp
+LIMIT 5;
