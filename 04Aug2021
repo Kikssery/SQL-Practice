@@ -13,8 +13,26 @@ SELECT
   date,
   temp_f,
   COUNT (CASE WHEN temp_f > 75 THEN 1 END)
-   AS CASE WHEN (ORDER BY date
-     UNBOUNDED PRECEDING
-    AND  ) hot_days
+   OVER (ORDER BY date
+   ROWS BETWEEN UNBOUNDED PRECEDING
+    AND CURRENT ROW) hot_days
 FROM temp
 LIMIT 5;
+
+
+-- For each station, what is the difference between the number of rides started at the station and the number of rides that ended at the station? 
+SELECT
+ start_station,
+ COUNT(start_station) AS start_trips,
+ COUNT(start_station) - (SELECT COUNT(*)
+    FROM trip AS t1
+    WHERE t.start_station =
+          t1.end_station) AS trips_diff
+FROM trip AS t
+GROUP BY start_station
+ORDER BY start_station DESC
+LIMIT 5;
+
+
+
+    
