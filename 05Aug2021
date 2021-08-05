@@ -19,3 +19,22 @@ SELECT player_name, height,
 FROM players
 WHERE CASE WHEN height > 188 THEN 'Tall' END IS NOT NULL
 LIMIT 3;
+
+
+-- How can you view stations with total trips lower than average using a nested subquery?
+SELECT
+ start_station,
+ COUNT (*) AS trips
+FROM trip
+GROUP BY start_station
+HAVING COUNT(*) < 
+  (SELECT AVG(tr)
+   FROM (
+     SELECT start_station,
+      COUNT(*) AS tr
+     FROM trip
+     GROUP BY start_station
+   ) AS subquery )
+LIMIT 5;
+
+
