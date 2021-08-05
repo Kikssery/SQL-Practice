@@ -1,0 +1,21 @@
+-- Extract the two hottest months from a data set of weather in San Francisco
+SELECT mo, mean_high
+FROM (
+  SELECT mo,
+   AVG(max_temp_f) AS mean_high
+  FROM (
+    SELECT 
+     EXTRACT(MONTH FROM date) AS mo,
+     max_temp_f
+    FROM weather) AS s
+  GROUP BY mo) AS s1
+ORDER BY mean_high DESC
+LIMIT 2;
+
+
+-- The average European male is 178 cm, with a standard deviation of 10 cm. Which players are 1 standard deviation taller or shorter than average?
+SELECT player_name, height,
+ CASE WHEN height > 188 THEN 'Tall' END AS height_category
+FROM players
+WHERE CASE WHEN height > 188 THEN 'Tall' END IS NOT NULL
+LIMIT 3;
