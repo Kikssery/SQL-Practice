@@ -1,0 +1,26 @@
+-- The free kick accuracy of players in the European Soccer Database is 48.2%.
+SELECT player_name, free_kick_accuracy
+FROM players 
+WHERE player_name IN 
+     (SELECT player_name 
+      FROM players
+      WHERE player_name LIKE 'Andre%')
+LIMIT 3;
+
+
+-- Rank soccer matches in the 2011/2012 season from highest to lowest by total of home_goal and away_goal
+SELECT date,
+ home_goal, away_goal,
+ RANK() OVER (ORDER BY home_goal + away_goal DESC) AS ranking
+FROM match
+WHERE season = '2011/2012'
+LIMIT 5;
+
+
+-- Create a simple window function to calculate the overall count of bicycle docks at a station without grouping the result
+SELECT 
+ name,
+ docks,
+ COUNT (docks) OVER() AS total_docks
+FROM stations
+LIMIT 5;
