@@ -74,5 +74,15 @@ MAX (Medals)
 // Moving Sum
 // Used to indicate performance: if the sum is going down, overall performance is going down
 
+--- Calculate the 3-year moving average of medals earned
+AVG(Medals) OVER
+  (ORDER BY Year ASC
+   ROWS BETWEEN
+   2 PRECEDING AND CURRENT ROW) AS Medals_MA
 
-
+-- Calculate each country's 3-game moving total
+SUM(Medals) OVER
+  (PARTITION BY Country
+   ORDER BY Year ASC
+   ROWS BETWEEN
+   2 PRECEDING AND CURRENT ROW) AS Medals_MA
