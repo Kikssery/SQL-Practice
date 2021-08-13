@@ -67,3 +67,12 @@ MAX (Medals)
   AS Max_Medals_Last
 
 
+// Moving Average
+// Used to indicate momentum/trends
+// Also useful in eliminating seasonality
+
+// Moving Sum
+// Used to indicate performance: if the sum is going down, overall performance is going down
+
+
+
