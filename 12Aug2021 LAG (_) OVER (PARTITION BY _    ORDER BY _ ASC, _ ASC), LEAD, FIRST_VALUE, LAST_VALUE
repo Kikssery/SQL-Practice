@@ -1,0 +1,57 @@
+// PARTITION BY operated on seperately by the window function
+// ROW_NUMBER will reset for each partition
+// LAG will only fetch a row's previous value if its previous row is in the same partition
+
+LAG (Champion) OVER
+  (PARTITION BY Event
+   ORDER BY Event ASC, Year ASC) AS Last_Champion
+   
+  
+-- Return the previous champions of each year's events by gender and event.
+ITH Athletics_Gold AS (
+  SELECT DISTINCT
+    Gender, Year, Event, Country
+  FROM Summer_Medals
+  WHERE
+    Year >= 2000 AND
+    Discipline = 'Athletics' AND
+    Event IN ('100M', '10000M') AND
+    Medal = 'Gold')
+
+SELECT
+  Gender, Year, Event,
+  Country AS Champion,
+  -- Fetch the previous year's champion by gender and event
+  LAG (Country) OVER (PARTITION BY Gender, Event
+            ORDER BY Year ASC) AS Last_Champion
+FROM Athletics_Gold
+ORDER BY Event ASC, Gender ASC, Year ASC;
+
+
+// Relative Fetching
+// LAG(column, n) returns column's value at the row n rows BEFORE the current row
+// LEAD(column, n) returns coloumn's value at the row n rows AFTER the current row
+
+// Absolute Fetching
+// FIRST_VALUE(column) & LAST_VALUE(column) return the first & last value in the table or partition
+
+
+-- Return the year and the city in which each Olympic games were held.
+-- Fetch the last city in which the Olympic games were held.
+
+WITH Hosts AS (
+  SELECT DISTINCT Year, City
+    FROM Summer_Medals)
+
+SELECT
+  Year,
+  City,
+  -- Get the last city in which the Olympic games were held
+  LAST_VALUE(City) OVER (
+   ORDER BY Year ASC
+   RANGE BETWEEN
+     UNBOUNDED PRECEDING AND
+     UNBOUNDED FOLLOWING
+  ) AS Last_City
+FROM Hosts
+ORDER BY Year ASC;
