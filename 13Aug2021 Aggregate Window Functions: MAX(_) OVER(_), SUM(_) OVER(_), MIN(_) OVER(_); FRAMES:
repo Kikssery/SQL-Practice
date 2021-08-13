@@ -51,3 +51,19 @@ FROM France_Medals
 ORDER BY Year ASC;
 
 
+// Frames
+// By defalut, a frame starts at the beginning of a table or partition and ends at the current row
+
+MAX (Medals)
+  OVER (ORDER BY Year ACS
+        ROWS BETWEEN
+        1 PRECEDIN AND CURRENT ROW)
+  AS Max_Medals_Last
+  
+MAX (Medals)
+  OVER (ORDER BY Year ACS
+        ROWS BETWEEN
+        CURRENT ROW AND 1 FOLLOWING)
+  AS Max_Medals_Last
+
+
