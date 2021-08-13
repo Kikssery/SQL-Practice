@@ -24,3 +24,30 @@ SELECT
                 ORDER BY Medals DESC) AS Rank_N
 FROM Athlete_Medals
 ORDER BY Country ASC, RANK_N ASC;
+
+
+// Paging: Splitting data into (apporximately) equal chunks
+// NTILE(n) splits the data into n apporximately equal pages
+
+NTILE (15) OVER() AS Page
+
+NTILE (3) OVER (ORDER BY Medals DESC) AS Third
+
+// Thirds averages
+
+WITH Country_Medals AS (...),
+  
+  Thirds AS (
+  SELECT
+    Country, edals,
+    NTILE (3) OVER (ORDER BY Medals DESC) AS Third
+  FROM Country_Medals
+  
+SELECT
+  Third.
+  ROUND (AVG(Medals), 2) AS Avg_Medals
+FROM Thirds
+GROUP BY Third
+ORDER BY Third ASC;
+
+
