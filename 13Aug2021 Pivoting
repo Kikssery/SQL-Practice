@@ -1,0 +1,5 @@
+// Pivoting
+
+CREATE EXTENSION IF NOT EXISTS tablefunc;
+
+SELECT * FROM 
