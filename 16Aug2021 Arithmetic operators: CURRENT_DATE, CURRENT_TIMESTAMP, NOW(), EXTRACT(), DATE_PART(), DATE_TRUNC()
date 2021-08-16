@@ -1,0 +1,60 @@
+// Retrieving the current timestamp
+
+SELECT NOW();
+-- output: 2019-04-19 02:51:18.448641+00:00
+-- with time zone
+
+
+// PostgreSQL specific casting
+SELECT NOW()::timestamp;
+-- output: 2019-04-19 02:51:18.448641
+-- without time zone
+
+
+-- to eliminate the timezone from the current timestamp
+SELECT CAST(NOW() AS timestamp);
+-- output: 2021-08-16 18:57:10.862445
+-- without a timezone
+
+-- to CAST the result of the NOW() function to a date from the current timestamp
+SELECT CAST(NOW() AS date);
+-- output: 2021-08-16
+-- same as CURRENT_DATE
+
+
+SELECT CURRENT_TIMESTAMP;
+-- output: 2019-04-19 02:51:18.448641+00:00
+-- same as NOW()
+
+SELECT CURRENT_TIMESTAMP(2);
+-- output: 2019-04-19 02:51:18.440000+00
+
+
+SELECT CURRENT_DATE;
+-- output: 2019-04-19
+
+SELECT CURRENT_TIME;
+-- output: 02:51:18.448641+00:00
+-- with time zone
+
+
+SELECT 
+	-- Select the current date
+	CURRENT_DATE,
+    -- CAST the result of the NOW() function to a date
+    CAST( NOW() AS date )
+-- output: 2021-08-16   2021-08-16
+
+
+-- Select the current timestamp without timezone and alias it as right_now.
+SELECT CURRENT_TIMESTAMP::timestamp AS right_now;
+
+
+SELECT
+	CURRENT_TIMESTAMP(0)::timestamp AS right_now,
+    interval '5 days' + CURRENT_TIMESTAMP(0) AS five_days_from_now;
+-- output:
+right_now	             five_days_from_now
+2021-08-16 19:07:57	   2021-08-21 19:07:57+00:00
+
+
