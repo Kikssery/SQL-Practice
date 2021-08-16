@@ -1,0 +1,32 @@
+// Adding and subtracting date/time data
+
+SELECT date '2005-09-11' - date '2005-09-10';
+-- output: integer 1
+
+SELECT date '2005-09-11' + integer '3';
+-- output: date 2005-09-14
+
+SELECT date '2005-09-11 00:00:00' - date '2005-09-09 12:00:00';
+-- output: interval 1 day 12:00:00
+
+
+// Calculating time periods with AGE
+
+SELECT AGE (timestamp '2005-09-11 00:00:00', timestamp '2005-09-09 12:00:00');
+-- output: interval 1 day 12:00:00
+
+SELECT 
+  AGE (rental_date)
+FROM rental;
+
+
+// Date/time arithmetic using INTERVALs
+
+SELECT timestamp '2019-05-01' + 21 * INTERVAL '1 day';
+-- output: timestamp without timezone 2019-05-22 00:00:00
+
+
+-- calculate the actual number of days rented as well as the true expected_return_date 
+-- byusing the rental_duration column from the film table along with the familiar rental_date from the rental table.
+-- To select columns from both the film and rental tables in a single query, 
+--'ll need to use the inventory table to join these two tables together since there is no explicit relationship between them.
