@@ -1,0 +1,159 @@
+// Common data types
+// Text data types: CHAR, VARCHAR, TEXT
+// Numeric data types: INT, DECIMAL
+// Date/time data types: DATE, TIME, TIMESTAMP, INTERVAL
+// Arrays
+
+// PostgreSQL has a system database called INFORMATION_SCHEMA that allows us to extract information about objects, including tables, in our database.
+
+
+-- Select all columns from the INFORMATION_SCHEMA.TABLES system database. Limit results that have a public table_schema.
+-- Select all columns from the TABLES system database
+SELECT * 
+FROM INFORMATION_SCHEMA.TABLES
+-- Filter by schema
+WHERE table_schema = 'public';
+
+
+-- The columns table of the INFORMATION_SCHEMA database also allows us to extract information about the data types of columns in a table. 
+-- We can extract information like the character or string length of a CHAR or VARCHAR column or the precision of a DECIMAL or NUMERIC floating point type.
+-- Get the column name and data type
+SELECT
+ 	column_name, 
+    data_type
+-- From the system database information schema
+FROM INFORMATION_SCHEMA.COLUMNS 
+-- For the customer table
+WHERE table_name = 'customer';
+
+
+
+// TIMESTAMP data types
+// 2019-03-26 01:05:17.93027+00
+
+// DATE and TIME data types
+// 2019-03-26  and  01:05:17.93027+00
+
+// INTERVAL data types
+// 4 days
+
+SELECT rental_date + INTERVAL '3 days' AS expected_return
+FROM rental;
+
+
+SELECT
+ 	-- Select the rental and return dates
+	rental_date,
+	return_date,
+ 	-- Calculate the expected_return_date
+	rental_date + INTERVAL '3 days' AS expected_return_date
+FROM rental;
+
+
+
+CREATE TABLE my_first_table (
+  first_column text,
+  second_column integer
+);
+
+INSERT INTO my_first_table
+  (first_column, second_column) VALUES ('text value', 12);
+  
+
+
+CREATE TABLE grades (
+  student_id int,
+  email text[][],
+  test_scores int[]
+);
+
+INSERT INTO grades
+  VALUES (1,
+  '{{"work", "work1@datacamp.com"}, {"other", "other1@datacamp.com"}}'.
+  '{92, 85, 96, 88}');
+  
+SELECT
+  email[1][1] AS type,
+  email[1][2] AS address,
+  test_scores[1],
+FROM grades;
+
+
+// PostgreSQL array indexes start with one and not zero
+
+
+SELECT
+  email[1][1] AS type,
+  email[1][2] AS address,
+  test_scores[1],
+FROM grades
+WHERE email[1][1] = 'work';
+
+
+SELECT
+  email[2][1] AS type,
+  email[2][2] AS address,
+  test_scores[1],
+FROM grades
+WHERE 'other' = ANY (email);
+
+
+SELECT
+  email[2][1] AS type,
+  email[2][2] AS address,
+  test_scores[1],
+FROM grades
+WHERE email @> ARRAY['other'];
+
+
+
+-- In our DVD Rentals database, the film table contains an ARRAY for special_features which has a type of TEXT[]. 
+-- Much like any ARRAY data type in PostgreSQL, a TEXT[] array can store an array of TEXT values. 
+-- This comes in handy when you want to store things like phone numbers or email addresses as we saw in the lesson.
+
+-- Select all films that have a special feature Trailers by filtering on the first index of the special_features ARRAY.
+-- Select the title and special features column 
+SELECT 
+  title, 
+  special_features 
+FROM film
+-- Use the array index of the special_features column
+WHERE special_features[1] = 'Trailers';
+
+-- Select all films that have Deleted Scenes in the second index of the special_features ARRAY.
+-- Select the title and special features column 
+SELECT 
+  title, 
+  special_features 
+FROM film
+-- Use the array index of the special_features column
+WHERE special_features[2] = 'Deleted Scenes';
+
+
+
+// The ANY function allows you to search for a value in any index position of an ARRAY. Here's an example.
+WHERE 'search text' = ANY(array_name)
+// When using the ANY function, the value you are filtering on appears on the left side of the equation with the name of the ARRAY column as the parameter in the ANY function.
+
+
+-- Match 'Trailers' in any index of the special_features ARRAY regardless of position.
+SELECT
+  title, 
+  special_features 
+FROM film 
+-- Modify the query to use the ANY function 
+WHERE 'Trailers' = ANY(special_features);
+
+
+
+// The contains operator @> operator is alternative syntax to the ANY function and matches data in an ARRAY using the following syntax.
+WHERE array_name @> ARRAY['search text'] :: type[]
+
+
+-- Use the contains operator to match the text Deleted Scenes in the special_features column.
+SELECT 
+  title, 
+  special_features 
+FROM film 
+-- Filter where special_features contains 'Deleted Scenes'
+WHERE special_features @> ARRAY['Deleted Scenes'];
