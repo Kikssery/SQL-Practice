@@ -1,0 +1,160 @@
+// Retrieving the current timestamp
+
+SELECT NOW();
+-- output: 2019-04-19 02:51:18.448641+00:00
+-- with time zone
+
+
+// PostgreSQL specific casting
+SELECT NOW()::timestamp;
+-- output: 2019-04-19 02:51:18.448641
+-- without time zone
+
+
+-- to eliminate the timezone from the current timestamp
+SELECT CAST(NOW() AS timestamp);
+-- output: 2021-08-16 18:57:10.862445
+-- without a timezone
+
+-- to CAST the result of the NOW() function to a date from the current timestamp
+SELECT CAST(NOW() AS date);
+-- output: 2021-08-16
+-- same as CURRENT_DATE
+
+
+SELECT CURRENT_TIMESTAMP;
+-- output: 2019-04-19 02:51:18.448641+00:00
+-- same as NOW()
+
+SELECT CURRENT_TIMESTAMP(2);
+-- output: 2019-04-19 02:51:18.440000+00
+
+
+SELECT CURRENT_DATE;
+-- output: 2019-04-19
+
+SELECT CURRENT_TIME;
+-- output: 02:51:18.448641+00:00
+-- with time zone
+
+
+SELECT 
+	-- Select the current date
+	CURRENT_DATE,
+    -- CAST the result of the NOW() function to a date
+    CAST( NOW() AS date )
+-- output: 2021-08-16   2021-08-16
+
+
+-- Select the current timestamp without timezone and alias it as right_now.
+SELECT CURRENT_TIMESTAMP::timestamp AS right_now;
+
+
+SELECT
+	CURRENT_TIMESTAMP(0)::timestamp AS right_now,
+	interval '5 days' + CURRENT_TIMESTAMP(0) AS five_days_from_now;
+-- output:
+right_now	             five_days_from_now
+2021-08-16 19:07:57	   2021-08-21 19:07:57+00:00
+
+
+
+// Extracting and transforming data/time data
+
+//EXTRACT(field FROM source)
+SELECT EXTRACT (quarter FROM timestamp '2005-01-24 05:12:00') AS quarter;
+
+DATE_PART('field', source)
+SELECT DATE_PART ('quarter', timestamp '2005-01-24 05:12:00') AS quarter;
+
+
+SELECT 
+	EXTRACT (quarter FROM tPAYMENT_DATE) AS quarter
+	EXTRACT (year FROM tPAYMENT_DATE) AS year
+	SUM (amount) AS total_payments
+FROM
+	payment
+GROUP BY 1, 2;
+-- group by quarter, year
+
+
+// DATE_TRUNC() will truncate timestamp or interval data types
+
+-- truncate timestamp '2005-02-21 15:30:30' by year
+SELECT DATE_TRUNC('year', TIMESTAMP '2005-02-21 15:30:30');
+-- output: 2005-01-01 00:00:00
+
+-- truncate timestamp '2005-02-21 15:30:30' by month
+SELECT DATE_TRUNC('month', TIMESTAMP '2005-02-21 15:30:30');
+-- output: 2005-05-01 00:00:00
+
+-- truncate rental_date by day of the month 
+SELECT DATE_TRUNC('day', rental_date) AS rental_day 
+FROM rental;
+-- output: 2005-05-24 00:00:00
+
+
+
+-- Now suppose you want to produce a predictive model that will help forecast DVD rental activity by day of the week. 
+-- You could use the EXTRACT() function with the dow field identifier in our query 
+-- to create a new field called dayofweek as a sub-field of the rental_date column from the rental table.
+-- You can COUNT() the number of records in the rental table for a given date range and aggregate by the newly created dayofweek column.
+
+-- Get the day of the week (dow) from the rental_date column.
+-- Count the total number of rentals by day of the week.
+-- Extract day of week from rental_date
+SELECT 
+  EXTRACT(dow FROM rental_date) AS dayofweek, 
+  -- Count the number of rentals
+  COUNT(rental_id) as rentals 
+FROM rental 
+GROUP BY 1;
+
+
+
+-- Count the total number of rentals by rental_day and alias it as rentals.
+SELECT 
+  DATE_TRUNC('day', rental_date) AS rental_day,
+  -- Count total number of rentals 
+  COUNT(rental_id) AS rentals 
+FROM rental
+GROUP BY 1;
+
+
+
+
+-- In this exercise, you are going to extract a list of customers and their rental history over 90 days. 
+-- You will be using the EXTRACT(), DATE_TRUNC(), and AGE() functions that you learned about during this chapter 
+-- along with some general SQL skills from the prerequisites to extract a data set that could be used to determine what day of the week customers are most likely to rent a DVD 
+-- and the likelihood that they will return the DVD late.
+
+-- Extract the day of the week from the rental_date column using the alias dayofweek.
+-- Use an INTERVAL in the WHERE clause to select records for the 90 day period starting on 5/1/2005.
+-- Finally, use a CASE statement and DATE_TRUNC() to create a new column called past_due which will be TRUE if the rental_days is greater than the rental_duration otherwise, 
+-- it will be FALSE.
+
+SELECT 
+  c.first_name || ' ' || c.last_name AS customer_name,
+  f.title,
+  r.rental_date,
+  -- Extract the day of week date part from the rental_date
+  EXTRACT(dow FROM r.rental_date) AS dayofweek,
+  AGE(r.return_date, r.rental_date) AS rental_days,
+  -- Use DATE_TRUNC to get days from the AGE function
+  CASE WHEN DATE_TRUNC('day', AGE(r.return_date, r.rental_date)) > 
+  -- Calculate number of d
+    f.rental_duration * INTERVAL '1' day 
+  THEN TRUE 
+  ELSE FALSE END AS past_due 
+FROM 
+  film AS f 
+  INNER JOIN inventory AS i 
+  	ON f.film_id = i.film_id 
+  INNER JOIN rental AS r 
+  	ON i.inventory_id = r.inventory_id 
+  INNER JOIN customer AS c 
+  	ON c.customer_id = r.customer_id 
+WHERE 
+  -- Use an INTERVAL for the upper bound of the rental_date 
+  r.rental_date BETWEEN CAST('2005-05-01' AS DATE) 
+  AND CAST('2005-05-01' AS DATE) + INTERVAL '90 day';
