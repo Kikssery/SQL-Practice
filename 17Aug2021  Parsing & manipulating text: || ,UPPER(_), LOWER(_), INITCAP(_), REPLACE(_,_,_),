@@ -1,0 +1,50 @@
+// String concatenation operator
+
+SELECT
+  first_name,
+  last_name,
+  first_name || ' ' || last_name AS full_nam
+FROM customer;
+
+
+SELECT
+  CONCAT (first_name, ' ', last_name) AS full_name
+  FROM customer;
+  
+
+SELECT
+  customer_id || ': '
+  || first_name || ' ' 
+  || last_name AS full_nam
+FROM customer;
+
+
+
+// Chanin the case of string
+
+SELECT
+  UPPER (email)
+FROM customer;
+
+
+SELECT 
+  INITCAP (title)
+FROM fil;
+
+
+
+// Replacing characters in a string
+
+SELECT 
+  REPLACE (description, 'A Astoundin', 'An Astounding') AS description
+FROM film;
+
+
+
+SELECT
+  title,
+  REVERSE (title)
+FROM film AS f;
+
+
+
