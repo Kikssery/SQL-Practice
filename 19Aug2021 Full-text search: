@@ -1,0 +1,22 @@
+// LIKE operator
+// _ wildcard: used in match exactly one character
+// % wildcard: used in match zero or more characters
+-- case sensitive
+
+
+// Full-test search:
+// using stemming
+// fuzzy string matching to handle spelling mistakes
+// ranking by the similarity to the search text
+
+SELECT title, description
+FROM film
+WHERE to_tsvector(title) @@ to_tsquery('elf');
+-- case insensitive
+
+
+
+-- Select the film description as a tsvector
+SELECT tsvector(description)
+FROM film;
+-- output: 'A' 'And' 'Display' 'Fateful' 'Georgia' 'Mad' 'Outgun' 'Scientist' 'Shark' 'Soviet' 'Womanizer' 'a' 'in' 'must' 'of' 'who'
