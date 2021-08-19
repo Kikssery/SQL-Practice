@@ -1,0 +1,228 @@
+-- Now you are going to use the film and category tables to create a new field called film_category by concatenating the category name with the film's title. 
+-- You will also format the result using functions you learned about in the video to transform the case of the fields you are selecting in the query; 
+-- for example, the INITCAP() function which converts a string to title case.
+
+-- Convert the film category name to uppercase.
+-- Convert the first letter of each word in the film's title to upper case.
+-- Concatenate the converted category name and film title separated by a colon.
+-- Convert the description column to lowercase.
+
+SELECT 
+  -- Concatenate the category name to coverted to uppercase
+  -- to the film title converted to title case
+  UPPER(c.name)  || ': ' || INITCAP(f.title) AS film_category, 
+  -- Convert the description column to lowercase
+  LOWER(f.description) AS description
+FROM 
+  film AS f 
+  INNER JOIN film_category AS fc 
+  	ON f.film_id = fc.film_id 
+  INNER JOIN category AS c 
+  	ON fc.category_id = c.category_id;
+    
+    
+    
+SELECT 
+  title,
+  CHAR_LENGTH (title)
+FROM film;
+
+
+SELECT 
+  title,
+  LENGTH (title)
+FROM film;
+-- output is the same as CHAR_LENGTH here
+
+
+
+// Finding the position of a character in a string
+
+SELECT 
+  email,
+  POSITION ('@' IN email)
+FROM customer;
+-- input: MARY.SMITH@sakilacustomer.org
+-- output: 11
+
+
+SELECT 
+  email,
+  STARPOS (email, '@')
+FROM customer;
+-- input: MARY.SMITH@sakilacustomer.org
+-- output: 11
+
+
+
+// Parsing string data
+
+-- extract the fisrt 50 characters from the left
+SELECT
+  LEFT (description, 50)
+FROM film;
+
+-- extract the last 50 characters
+SELECT
+  RIGHT (description, 50)
+FROM film;
+
+-- extract substrings of character data from the starting position for a certain length 
+SELECT 
+  SUBSTRING (description, 10, 50)
+FROM film AS f;
+
+
+SELECT 
+  SUBSTRING (email FROM 0 FOR POSITION('@ IN email))
+FROM customer;
+-- input: MARY.SMITH@sakilacustomer.org
+-- output: MARY.SMITH
+
+
+SELECT 
+  SUBSTRING (email FROM POSITION('@ IN email)+1 FOR CHAR_LENGTH(email))
+FROM customer;
+-- input: MARY.SMITH@sakilacustomer.org
+-- output: sakilacustomer.org
+
+
+SELECT 
+  SUBSTR (description, 10, 50)
+FROM film AS f;
+-- only allow to be seperated by comma, does not allow to use "FROM ... FOR ..."
+
+
+
+-- Extract only the street address without the street number from the address column.
+SELECT 
+  -- Select only the street name from the address table
+  SUBSTRING(address FROM POSITION(' ' IN address)+1 FOR LENGTH(address))
+FROM 
+  address;
+  
+  
+  
+  SELECT
+  -- Extract the characters to the left of the '@'
+  LEFT(email, POSITION('@' IN email)-1) AS username,
+  -- Extract the characters to the right of the '@'
+  SUBSTRING(email FROM POSITION('@' IN email)+1 FOR LENGTH(email)) AS domain
+FROM customer;
+
+
+
+// Removing whitespace from strings
+
+TRIM ( [leading/trailing/both] [characters] from string)
+// First parameter: [leading/trailing/both]
+-- default: both
+// Second parameter: [characters]
+-- default: a blank space
+// Third parameter: string
+
+
+SELECT TRIM('   padded   ');
+-- output: padded;
+-- Remove whitespace from the beginning and the end of the string
+
+SELECT LTRIM('   padded   ');
+-- output: padded   ;
+
+SELECT RTRIM('   padded   ');
+-- output:    padded;
+
+
+
+// Padding strings with character data
+
+SELECT LPAD('padded', 10, '#');
+-- output: ####padded
+-- total character length: 10
+
+SELECT LPAD('padded', 10);
+-- output:     padded;
+-- total character length: 10, padded with space as defult
+
+SELECT LPAD('padded', 5);
+-- output: padde
+
+SELECT RPAD('padded', 10, '#');
+-- output: padded####
+
+
+
+-- Add a single space to the end or right of the first_name column using a padding function.
+-- Use the || operator to concatenate the padded first_name to the last_name column.
+
+-- Concatenate the padded first_name and last_name 
+SELECT 
+	RPAD(first_name, LENGTH(first_name)+1) || last_name AS full_name
+FROM customer;
+
+
+-- Now add a single space to the left or beginning of the last_name column using a different padding function than the first step.
+-- Use the || operator to concatenate the first_name column to the padded last_name.
+
+-- Concatenate the first_name and last_name 
+SELECT 
+	first_name || LPAD(last_name, LENGTH(last_name)+1) AS full_name
+FROM customer; 
+
+
+-- Add a single space to the right or end of the first_name column.
+-- Add the characters < to the right or end of last_name column.
+-- Finally, add the characters > to the right or end of the email column.
+
+-- Concatenate the first_name and last_name 
+SELECT 
+	RPAD(first_name, LENGTH(first_name)+1) 
+    || RPAD(last_name, LENGTH(last_name)+2, ' <') 
+    || RPAD(email, LENGTH(email)+1, '>') AS full_email
+FROM customer; 
+
+
+
+-- Convert the film category name to uppercase and use the CONCAT() concatenate it with the title.
+-- Truncate the description to the first 50 characters and make sure there is no leading or trailing whitespace after truncating.
+
+-- -- Concatenate the uppercase category name and film title
+SELECT 
+  CONCAT(UPPER(c.name), ': ', f.title) AS film_category, 
+  -- Truncate the description remove trailing whitespace
+  TRIM(LEFT(description, 50)) AS film_desc
+FROM 
+  film AS f 
+  INNER JOIN film_category AS fc 
+  	ON f.film_id = fc.film_id 
+  INNER JOIN category AS c 
+  	ON fc.category_id = c.category_id;
+    
+    
+
+-- In this exercise, we are going to use the film and category tables to create a new field called film_category by concatenating the category name with the film's title. 
+-- You will also practice how to truncate text fields like the film table's description column without cutting off a word.
+-- To accomplish this we will use the REVERSE() function to help determine the position of the last whitespace character in the description before we reach 50 characters. 
+-- This technique can be used to determine the position of the last character that you want to truncate and ensure 
+-- that it is less than or equal to 50 characters AND does not cut off a word.
+
+-- Get the first 50 characters of the description column
+-- Determine the position of the last whitespace character of the truncated description column 
+-- and subtract it from the number 50 as the second parameter in the first function above.
+
+SELECT 
+  UPPER(c.name) || ': ' || f.title AS film_category, 
+  -- Truncate the description without cutting off a word
+  LEFT(description, 50 - 
+    -- Subtract the position of the first whitespace character
+    POSITION(
+      ' ' IN REVERSE(LEFT(description, 50))
+    )
+  ) 
+FROM 
+  film AS f 
+  INNER JOIN film_category AS fc 
+  	ON f.film_id = fc.film_id 
+  INNER JOIN category AS c 
+  	ON fc.category_id = c.category_id;
+
