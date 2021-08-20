@@ -17,6 +17,13 @@ WHERE to_tsvector(title) @@ to_tsquery('elf');
 
 
 -- Select the film description as a tsvector
+SELECT to_tsvector(description)
+FROM film;
+-- output: 'display':3 'fate':2 'georgia':19 'mad':9 'must':12 'outgun':13 'scientist':10 'shark':16 'soviet':18 'woman':6
+
+
 SELECT tsvector(description)
 FROM film;
 -- output: 'A' 'And' 'Display' 'Fateful' 'Georgia' 'Mad' 'Outgun' 'Scientist' 'Shark' 'Soviet' 'Womanizer' 'a' 'in' 'must' 'of' 'who'
+
+
