@@ -54,3 +54,54 @@ FROM artists
 WHERE nationality IN ('British', 'South African', 'Mexican')
 ORDER BY name
 LIMIT 10;
+
+
+// The artist_id column from the table awards contains the id of the artist who won a music award for that year.
+// For each year, return the award winning artist name. Only return rows with a match in both tables.
+SELECT awards.year, 
+       artists.name 
+FROM awards
+-- WHERE awards.artist_id = artists.id,
+-- artists.id IS NOT NULL
+INNER JOIN artists
+ON awards.artist_id = artists.id
+ORDER BY awards.year DESC
+LIMIT 5;
+
+
+// Using the two tables tracks and artists, return all songs (by name) and the name of the corresponding artist.
+SELECT a.name AS artist_name, 
+       t.name AS song_name
+FROM tracks AS t 
+LEFT JOIN artists AS a 
+    -- WHERE a.id = t.artist_id
+    ON t.artist_id = a.id 
+ORDER BY t.artist_id, song_name
+LIMIT 5;
+
+
+// Determine the total quantity_ordered across all products for each order_number.
+-- SELECT order_number, COUNT (*) AS total_quantity
+SELECT order_number, SUM(quantity_ordered) AS total_quantity
+FROM order_details
+GROUP BY order_number
+ORDER BY order_number
+LIMIT 5;
+
+
+// A wine has been entered with the wrong value in the style column. It cannot be linked with other tables.
+// Replace pinot noir with pinot grigio and return the updated wine styles.
+-- SELECT REPLACE ('pinot noir', 'pinot grigio') AS correct_style
+SELECT REPLACE(style, 'noir', 'grigio') AS correct_style
+FROM wine
+ORDER BY style
+LIMIT 7;
+
+
+// Extract the name of artists that start with a vowel ('A', 'E', 'I', 'O', 'U').
+SELECT DISTINCT name
+FROM artists
+-- WHERE name IN ('A', 'E', 'I', 'O', 'U')
+WHERE LEFT(name, 1) IN ('A', 'E', 'I', 'O', 'U')
+ORDER BY name
+LIMIT 7;
