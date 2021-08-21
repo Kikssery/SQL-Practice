@@ -1,0 +1,46 @@
+// User-defined data types
+
+// Enumerated data types
+
+CREATE TYPE dayofweek AS ENUM(
+  'Monday',
+  'Tuesday',
+  'Wednesday',
+  'Thursday',
+  'Saturday',
+  'Sunday'
+);
+
+
+// Getting information about user-defined data types
+
+SELECT typename, typcategory
+FROM pg_type
+WHERE typename = 'dayofweek';
+
+-- output:
+typename    typcategory
+dayofweek   E
+-- E means enumerated data types
+
+
+SELECT column_name, data type, udt_name
+FROM INFORMATION_SCHEMA.COLUMNS
+WHERE table_name = "film';
+
+-- output:
+column_name     data_type              udt_name
+title           character varying      varchar
+rating          USER_DEFINED           mpaa_rating
+
+
+// User-defined functions 
+
+CREATE FUNCTION squared (i integer) RETURNS integer AS $$
+  BEGIN
+    RETURN i * i;
+  END;
+$$ LANGUAGE plpgsql;
+
+
+
