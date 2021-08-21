@@ -130,4 +130,116 @@ WHERE
     
 
 // Commonly used enxtensions in PostgreSQL
+-- PostGIS: location
+-- PostPic: image process
+-- fuzzystrmatch
+-- pg_trgm
 
+
+// Querying extensions meta data
+
+//Available Extensions
+SELECT name
+FROM pg_available_extensions;
+
+// Installed Extensions
+SELECT extname
+FROM pg_extension;
+
+
+
+-- Enable the fuzzystrmatch extension
+CREATE EXTENSION IF NOT EXISTS fuzzystrmatch;
+-- Confirm that fuzzstrmatch has been enabled
+SELECT extname FROM pg_extension;
+
+
+
+// Using fuzzystrmatch or fuzzy searching
+
+SELECT levenshtein ('GUMBO', 'GAMBOL');
+-- output: 2
+
+
+// Compare two strings with pg_trgm
+
+SELECT similarity ('GUMBO', 'GAMBOL');
+
+-- output: 0.18181818
+-- 0: no matching, 1: a perfect match
+
+
+
+-- Select all rows extensions
+SELECT * 
+FROM pg_extension;
+
+-- output: 
+extname		extowner	extnamespace	extrelocatable	extversion	extconfig	extcondition
+plpgsql		10		11		false		1.0		null		null
+fuzzystrmatch	16384		2200		true		1.1		null		null
+pg_trgm	16384	2200		true		1.4		null		null		null
+
+
+
+-- Calculate the levenshtein distance for the film title with the string JET NEIGHBOR.
+-- Select the title and description columns
+SELECT  
+  title, 
+  description, 
+  -- Calculate the levenshtein distance
+  levenshtein(title, 'JET NEIGHBOR') AS distance
+FROM 
+  film
+ORDER BY 3
+-- order by the 3rd item
+
+
+
+-- Select the title and description for all DVDs from the film table.
+-- Perform a full-text search by converting the description to a tsvector and match it to the phrase 'Astounding & Drama' using a tsquery in the WHERE clause.
+
+-- Select the title and description columns
+SELECT  
+  title, 
+  description 
+FROM 
+  film
+WHERE 
+  -- Match "Astounding Drama" in the description
+  to_tsvector(description) @@ 
+  to_tsquery('Astounding & Drama');
+  
+  
+  
+-- Add a new column that calculates the similarity of the description with the phrase 'Astounding Drama'.
+-- Sort the results by the new similarity column in descending order.
+
+SELECT 
+  title, 
+  description, 
+  -- Calculate the similarity
+  similarity(description, 'Astounding & Drama')
+FROM 
+  film 
+WHERE 
+  to_tsvector(description) @@ 
+  to_tsquery('Astounding & Drama') 
+ORDER BY 
+	similarity(description, 'Astounding & Drama') DESC;
+
+
+SELECT 
+  title, 
+  description, 
+  -- Calculate the similarity
+  similarity(description, 'Astounding & Drama')
+FROM 
+  film 
+WHERE 
+  to_tsvector(description) @@ 
+  to_tsquery('Astounding & Drama') 
+ORDER BY 
+	3 DESC;
+	
+	
