@@ -1,0 +1,56 @@
+SELECT name, release_date
+FROM tracks
+-- ORDER BY release_date
+ORDER BY release_date, name
+LIMIT 10;
+
+
+SELECT name, artist_name
+FROM tracks
+INNER JOIN artist_names
+	-- ON tracks.artist_id = artist_name.artist_id
+	USING(artist_id)
+ORDER BY artist_name, name
+LIMIT 10;
+
+
+-- SELECT type, COUNT *
+SELECT type, COUNT (*)
+FROM wine
+GROUP BY type
+ORDER BY type
+
+
+SELECT order_number, product_code, price_item,
+-- case WHEN price_item <= 50 THEN 'low'
+CASE WHEN price_item <= 50 THEN 'low'
+    WHEN price_item > 50 AND price_item <= 100 THEN 'medium'
+    WHEN price_item > 100 THEN 'high'
+    ELSE 'undefined'
+--    AS cost_level
+END AS cost_level
+FROM order_details
+ORDER BY order_number, product_code
+LIMIT 10;
+
+
+-- SELECT COUNT * AS long_songs
+SELECT COUNT(*) AS long_songs
+FROM tracks
+WHERE duration_ms > 100000;
+
+
+SELECT name,
+       -- 'followers' - 1000 AS correct_followers
+       followers - 1000 AS correct_followers
+FROM artists
+ORDER BY correct_followers DESC, name
+LIMIT 7;
+
+
+SELECT name, nationality
+FROM artists
+-- WHERE nationality CONTAINS ('British', 'South African', 'Mexican')
+WHERE nationality IN ('British', 'South African', 'Mexican')
+ORDER BY name
+LIMIT 10;
