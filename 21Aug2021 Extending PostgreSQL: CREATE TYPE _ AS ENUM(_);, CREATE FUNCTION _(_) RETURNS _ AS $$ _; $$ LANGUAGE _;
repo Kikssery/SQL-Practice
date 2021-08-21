@@ -1,0 +1,76 @@
+// User-defined data types
+
+// Enumerated data types
+
+CREATE TYPE dayofweek AS ENUM(
+  'Monday',
+  'Tuesday',
+  'Wednesday',
+  'Thursday',
+  'Saturday',
+  'Sunday'
+);
+
+
+// Getting information about user-defined data types
+
+SELECT typname, typcategory
+FROM pg_type
+WHERE typename = 'dayofweek';
+
+-- output:
+typename    typcategory
+dayofweek   E
+-- E means enumerated data types
+
+
+SELECT column_name, data_ype, udt_name
+FROM INFORMATION_SCHEMA.COLUMNS
+WHERE table_name = "film';
+
+-- output:
+column_name     data_type              udt_name
+title           character varying      varchar
+rating          USER_DEFINED           mpaa_rating
+
+
+
+// User-defined functions 
+
+CREATE FUNCTION squared (i integer) RETURNS integer AS $$
+  BEGIN
+    RETURN i * i;
+  END;
+$$ LANGUAGE plpgsql;
+
+
+SELECT squared(10);
+-- output: 100
+
+
+// user-defined fucntions in the Sakila database:
+-- get_customer_balance(customer_id, effective data): calculates the current outstanding balance for a given customer
+-- inventory_held_by_customer(inventory_id): returns the cusotmer_id that is currently renting an inventory item or null if it's currently available
+-- inventory_in_stock(inventory_id): returns a boolean value of whether an invenotry item is currently in stock
+
+
+
+-- Create an enumerated data type, compass_position
+CREATE TYPE compass_position AS ENUM (
+  	-- Use the four cardinal directions
+  	'North', 
+  	'South',
+  	'East', 
+  	'West'
+);
+-- Confirm the new data type is in the pg_type system table
+SELECT typname
+FROM pg_type
+WHERE typname='compass_position';
+
+
+
+-- The Sakila database has a user-defined enum data type called mpaa_rating. 
+--  rating column in the film table is an mpaa_rating type and contains the familiar rating for that film like PG or R. This is a great example of when an enumerated data type comes in handy. Film ratings have a limited number of standard values that rarely change.
+
+When you want to learn about a column or data type in your database the best place to start is the INFORMATION_SCHEMA. You can find information about the rating column that can help you learn about the type of data you can expect to find. For enum data types, you can also find the specific values that are valid for a particular enum by looking in the pg_enum system table. Let's dive into the exercises and learn more.
