@@ -45,7 +45,7 @@ Memory Usage: 0B, less than 100.00% of MySQL online submissions for Customers Wh
 
 
 
-Other solusion:
+Other solution:
 
 select customers.name as 'Customers'
 from customers
