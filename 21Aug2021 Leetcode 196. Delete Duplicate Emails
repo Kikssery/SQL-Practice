@@ -1,0 +1,53 @@
+Write a SQL query to delete all duplicate email entries in a table named Person, keeping only unique emails based on its smallest Id.
+
++----+------------------+
+| Id | Email            |
++----+------------------+
+| 1  | john@example.com |
+| 2  | bob@example.com  |
+| 3  | john@example.com |
++----+------------------+
+Id is the primary key column for this table.
+For example, after running your query, the above Person table should have the following rows:
+
++----+------------------+
+| Id | Email            |
++----+------------------+
+| 1  | john@example.com |
+| 2  | bob@example.com  |
++----+------------------+
+Note:
+
+Your output is the whole Person table after executing your sql. Use delete statement.
+
+
+
+# Write your MySQL query statement below
+DELETE p1 FROM Person AS p1
+INNER JOIN Person AS p2
+WHERE 
+    p1.id > p2.id AND p1.email = p2.email;
+    
+
+
+08/21/2021 22:03	Accepted	1650 ms	0B	mysql
+
+
+
+Solution:
+
+DELETE p1 FROM Person p1,
+    Person p2
+WHERE
+    p1.Email = p2.Email AND p1.Id > p2.Id
+
+
+
+Other solution:
+
+# Write your MySQL query statement below
+DELETE FROM Person WHERE Id NOT IN 
+(SELECT * FROM(
+    SELECT MIN(Id) FROM Person GROUP BY Email) as p);
+
+-- runtime: 1707 ms
