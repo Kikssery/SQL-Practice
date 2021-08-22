@@ -1,0 +1,57 @@
+Suppose that a website contains two tables, the Customers table and the Orders table. Write a SQL query to find all customers who never order anything.
+
+Table: Customers.
+
++----+-------+
+| Id | Name  |
++----+-------+
+| 1  | Joe   |
+| 2  | Henry |
+| 3  | Sam   |
+| 4  | Max   |
++----+-------+
+Table: Orders.
+
++----+------------+
+| Id | CustomerId |
++----+------------+
+| 1  | 3          |
+| 2  | 1          |
++----+------------+
+Using the above tables as example, return the following:
+
++-----------+
+| Customers |
++-----------+
+| Henry     |
+| Max       |
++-----------+
+
+
+
+# Write your MySQL query statement below
+SELECT Name AS Customers
+FROM Customers AS c
+LEFT JOIN Orders AS o
+ON c.Id = o.CustomerId
+WHERE o.Id IS NULL;
+
+
+
+08/21/2021 21:43	Accepted	465 ms	0B	mysql
+
+Runtime: 465 ms, faster than 43.48% of MySQL online submissions for Customers Who Never Order.
+Memory Usage: 0B, less than 100.00% of MySQL online submissions for Customers Who Never Order.
+
+
+
+Other solusion:
+
+select customers.name as 'Customers'
+from customers
+where customers.id not in
+(
+    select customerid from orders
+);
+
+-- runtime: 513 ms
