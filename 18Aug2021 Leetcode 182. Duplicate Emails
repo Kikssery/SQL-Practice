@@ -42,4 +42,4 @@ FROM Person
 GROUP BY Email
 HAVING count(Email) > 1;
 
--- 	runtime: 415 ms
+-- runtime: 415 ms
